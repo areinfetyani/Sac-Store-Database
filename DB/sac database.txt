@@ -1,0 +1,120 @@
+drop database if exists sac;
+create database sac;
+use sac;
+DROP TABLE IF EXISTS product;
+DROP TABLE IF EXISTS Customer;
+DROP TABLE IF EXISTS orderT;
+DROP TABLE IF EXISTS order_item;
+DROP TABLE IF EXISTS delivery;
+DROP TABLE IF EXISTS purchase;
+DROP TABLE IF EXISTS material;
+CREATE TABLE Customer (
+    c_id INT PRIMARY KEY,
+    c_name VARCHAR(255),
+    email VARCHAR(255),
+    address VARCHAR(255),
+    phone VARCHAR(30)
+);
+create table material(
+M_id int(32) not Null, 
+M_name varchar(64) default Null,
+`supplier contact info` varchar(64) default Null,
+`unit cost` int(32) default Null,
+`stock quantity` int(32) default Null,
+supplier varchar(64) default Null,
+`Description` varchar(64) default Null
+);
+CREATE TABLE product (
+    pid INT,
+    pname VARCHAR(32),
+    price INT,
+    stock_quantity INT,
+    description VARCHAR(255),
+    PRIMARY KEY (pid)
+);
+CREATE TABLE orderT(
+    or_id INT PRIMARY KEY,
+    cu_id int,
+    FOREIGN KEY (cu_id) REFERENCES Customer (c_id) ON DELETE CASCADE ON UPDATE CASCADE ,
+    Odate DATE,
+    total_amount DECIMAL(10,2));
+CREATE TABLE purchase (
+
+    pr_id INT primary key,
+    o_id int,
+    FOREIGN KEY (o_id) REFERENCES orderT (or_id) ON DELETE CASCADE ON UPDATE CASCADE ,
+     payment_confirmation varchar(20),
+    payment_method VARCHAR(20),
+    transaction_status VARCHAR(20)
+);
+  CREATE TABLE IF NOT EXISTS delivery (
+    delivery_Id INT PRIMARY KEY,
+    order_id INT,
+	FOREIGN KEY (order_id) REFERENCES orderT (or_id) ON DELETE restrict ON UPDATE CASCADE,
+    delivery_Date DATE,
+    estimated_Delivery_Time VARCHAR(50),
+    delivery_Statuse VARCHAR(50),
+    shipping_Company VARCHAR(50),
+    delivery_Address VARCHAR(255)
+);
+CREATE TABLE order_item (
+    pid INT,
+    or_id INT,
+    quantity INT,
+    subtotal DOUBLE,
+    FOREIGN KEY (pid) REFERENCES product (pid) ON DELETE restrict ON UPDATE CASCADE,
+    FOREIGN KEY (or_id) REFERENCES orderT (or_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    PRIMARY KEY (pid, or_id)
+);
+
+INSERT INTO Customer (c_id, c_name, email, address, phone)
+VALUES
+    (1, 'John Doe', 'john.doe@example.com', '123 Main St, Cityville', '555-1234'),
+    (2, 'Jane Smith', 'jane.smith@example.com', '456 Oak St, Townsville', '555-5678'),
+    (3, 'Bob Johnson', 'bob.johnson@example.com', '789 Pine St, Villagetown', '555-9012');
+
+INSERT INTO material (M_id, M_name, `supplier contact info`, `unit cost`, `stock quantity`, supplier, `Description`)
+VALUES
+  (1, 'White Fabric', 'Supplier_A_Contact@example.com', 5, 200, 'Supplier_A', 'High-quality white fabric for various uses'),
+  (2, 'Black Fabric', 'Supplier_B_Contact@example.com', 6, 180, 'Supplier_B', 'Durable black fabric suitable for multiple applications'),
+  (3, 'Buttons', 'Supplier_C_Contact@example.com', 1, 500, 'Supplier_C', 'Assorted buttons for bags'),
+  (4, 'Keyhooks', 'Supplier_D_Contact@example.com', 2, 300, 'Supplier_D', 'Sturdy keyhooks for bags'),
+  (5, 'Underlay Black', 'Supplier_E_Contact@example.com', 8, 100, 'Supplier_E', 'Black underlay for various craftings'),
+  (6, 'Underlay White', 'Supplier_F_Contact@example.com', 8, 120, 'Supplier_F', 'White underlay for creative designs'),
+  (7, 'Vaslien', 'Supplier_G_Contact@example.com', 15, 50, 'Supplier_G', 'Premium Vaslien material'),
+  (8, 'Scarfs', 'Supplier_H_Contact@example.com', 7, 150, 'Supplier_H', 'Fashionable scarfs in different colors and patterns');
+  
+INSERT INTO product (pid, pname, price, stock_quantity, description)
+VALUES
+    (1, 'White Bag', 50, 100, 'A top-notch handmade tote bag, carefully crafted with quality materials for lasting style and durability!'),
+    (2, 'Black Bag', 20, 150, 'Tie twillies around the handles for an instant style upgrade!'),
+    (3, 'Pins', 15, 200, 'Small, mighty accessories for effortlessly styling bags with a personal touch!');
+
+INSERT INTO orderT (or_id, cu_id, Odate, total_amount)
+VALUES
+    (1, 1, '2024-01-29', 100.00),
+    (2, 2, '2024-01-30', 150.00),
+    (3, 3, '2024-02-01', 200.00);
+    
+INSERT INTO order_item (pid, or_id, quantity, subtotal)
+VALUES
+    (1, 1, 2, 100.00),  -- 2 White Bags at $50 each
+    (2, 2, 3, 60.00),   -- 3 Black Bags at $20 each
+    (3, 3, 5, 75.00);   -- 5 Pins at $15 each
+
+INSERT INTO purchase (pr_id, o_id, payment_confirmation, payment_method, transaction_status)
+VALUES
+    (1, 1, 'Confirmed', 'Credit Card', 'Completed'),
+    (2, 2, 'Pending', 'PayPal', 'Processing'),
+    (3, 3, 'Confirmed', 'Bank Transfer', 'Completed');
+
+INSERT INTO delivery (delivery_Id, order_id, delivery_Date, estimated_Delivery_Time, delivery_Statuse, shipping_Company, delivery_Address)
+VALUES
+    (1, 1, '2024-02-05', '2:00 PM', 'Delivered', 'FedEx', '123 Main St, Cityville'),
+    (2, 2, '2024-02-06', '3:30 PM', 'In Transit', 'UPS', '456 Oak St, Townsville'),
+    (3, 3, '2024-02-07', '5:00 PM', 'Pending', 'DHL', '789 Pine St, Villagetown');
+    select * from orderT;
+    select * from customer;
+    select * from order_item;
+    select * from delivery;
+    select * from purchase;
